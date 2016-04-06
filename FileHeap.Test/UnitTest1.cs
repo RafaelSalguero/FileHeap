@@ -23,6 +23,47 @@ namespace FileHeap.Test
             return new MemoryStream(System.Text.Encoding.ASCII.GetBytes(Data));
         }
 
+        /// <summary>
+        /// Read an stream onto a byte array
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
+        }
+
+        [TestMethod]
+        public void MockTest()
+        {
+            var Heap = new FileHeapMock();
+            var Hash1 = Heap.Add(GetData("Hola"));
+            var Hash2 = Heap.Add(GetData("Adios"));
+
+            Assert.AreEqual(1, Heap.GetUserCount(Hash1));
+            Assert.AreEqual(1, Heap.GetUserCount(Hash2));
+
+            Heap.Add(GetData("Adios"));
+            Assert.AreEqual(2, Heap.GetUserCount(Hash2));
+
+            Assert.IsTrue(ReadFully(Heap.Read(Hash1)).SequenceEqual(System.Text.Encoding.ASCII.GetBytes("Hola")));
+
+            Heap.Remove(Hash1);
+            Assert.AreEqual(0, Heap.GetUserCount(Hash1));
+
+            Heap.Remove(Hash2);
+            Assert.AreEqual(1, Heap.GetUserCount(Hash2));
+        }
+
         [TestMethod]
         public void HeapTest()
         {
@@ -43,6 +84,12 @@ namespace FileHeap.Test
             Assert.AreEqual(Cryptopack.Hash.SHA2(System.Text.Encoding.ASCII.GetBytes("Prueba")), Cryptopack.Text.ByteArrayToHexString(Hash1));
 
             var Hash2 = Heap.Add(GetData("Hola a todos"));
+
+            //Check content:
+            using (var Stream = Heap.Read(Hash1))
+            {
+                Assert.IsTrue(ReadFully(Stream).SequenceEqual(System.Text.Encoding.ASCII.GetBytes("Prueba")));
+            }
 
             //Check that both files exists:
             Assert.IsTrue(File.Exists(Heap.GetPath(Hash1)));

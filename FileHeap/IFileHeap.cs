@@ -36,6 +36,13 @@ namespace FileHeap
         /// </summary>
         /// <param name="Hash">SHA2 hash of the data</param>
         string GetPath(byte[] Hash);
+
+        /// <summary>
+        /// Read a file given its hash
+        /// </summary>
+        /// <param name="Hash"></param>
+        /// <returns></returns>
+        Stream Read(byte[] Hash);
     }
 
     public static class FileHeapExtensions
@@ -61,7 +68,7 @@ namespace FileHeap
     }
 
     /// <summary>
-    /// Implementation of the IFileHeap that uses the real file system. File data is stored on a "data.bin" file on the directory folder and the user count on the "users.txt"
+    /// Implementation of the IFileHeap that uses an abstraction of the file system. File data is stored on a "data.bin" file on the directory folder and the user count on the "users.txt"
     /// </summary>
     public class FileHeap : IFileHeap
     {
@@ -69,7 +76,7 @@ namespace FileHeap
         /// Create a new file heap
         /// </summary>
         /// <param name="DirectorySolver">The class that provides paths to file directories given its hash</param>
-        /// <param name="BasePath"></param>
+        /// <param name="FileSystem">Abstraction of the file system that removes all dependencies of the real file system by the FileHeap</param>
         public FileHeap(IFileHeapDirectory DirectorySolver, IFileSystem FileSystem)
         {
             this.DirectorySolver = DirectorySolver;
@@ -190,6 +197,9 @@ namespace FileHeap
             return 0;
         }
 
-      
+        public Stream Read(byte[] Hash)
+        {
+            return new FileStream(GetPath(Hash), FileMode.Open);
+        }
     }
 }

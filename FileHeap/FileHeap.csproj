@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\FileHeap.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\FileHeap.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="cryptopack, Version=1.0.5939.16121, Culture=neutral, processorArchitecture=MSIL">
@@ -49,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileHeapDirectory.cs" />
+    <Compile Include="FileHeapMock.cs" />
     <Compile Include="IFileHeap.cs" />
     <Compile Include="IFileHeapDirectory.cs" />
     <Compile Include="IFileSystem.cs" />
